@@ -14,6 +14,7 @@ class MongoCDriverConan(ConanFile):
     options = {"shared": [True, False]}
     default_options = "shared=False"
     requires = 'OpenSSL/1.1.0g@conan/stable', 'zlib/[~=1.2]@conan/stable'
+    exports_sources = ["Find*.cmake"]
     # TODO add cyrus-sasl
 
     def configure(self):
@@ -54,15 +55,17 @@ class MongoCDriverConan(ConanFile):
             config_args.append("--disable-automatic-init-and-cleanup")
             config_args.append("--disable-tests")
             config_args.append("--disable-examples")
+            config_args.append("--disable-sasl") # TODO for now
 
             env_build.configure(args=config_args)
             env_build.make()
 
     def package(self):
         self.copy(pattern="COPYING*", src="sources")
-        self.copy(pattern="*.h", dst="include/bson", src="sources/src/libbson/src/bson", keep_path=False)
-        self.copy(pattern="*.h", dst="include/jsonsl", src="sources/src/libbson/src/jsonsl", keep_path=False)
-        self.copy(pattern="*.h", dst="include/mongoc", src="sources/src/mongoc", keep_path=False)
+        self.copy("Find*.cmake", ".", ".")
+        self.copy(pattern="*.h", dst="include", src="sources/src/libbson/src/bson", keep_path=False)
+        self.copy(pattern="*.h", dst="include", src="sources/src/libbson/src/jsonsl", keep_path=False)
+        self.copy(pattern="*.h", dst="include", src="sources/src/mongoc", keep_path=False)
         # self.copy(pattern="*.dll", dst="bin", src="bin", keep_path=False)
         self.copy(pattern="*.lib", dst="lib", src="sources", keep_path=False)
         self.copy(pattern="*.a", dst="lib", src="sources", keep_path=False)
@@ -70,7 +73,8 @@ class MongoCDriverConan(ConanFile):
         self.copy(pattern="*.dylib", dst="lib", src="sources", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ['mongoc', 'bson']
+        # needs libresolv
+        self.cpp_info.libs = ['mongoc', 'bson', 'resolv']
         if tools.os_info.is_macos:
             self.cpp_info.exelinkflags = ['-framework CoreFoundation', '-framework Security']
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
