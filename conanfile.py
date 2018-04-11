@@ -3,7 +3,6 @@
 
 from conans import ConanFile, AutoToolsBuildEnvironment, tools
 import os
-import subprocess
 
 class MongoCDriverConan(ConanFile):
     name = "mongo-c-driver"
@@ -53,6 +52,8 @@ class MongoCDriverConan(ConanFile):
                         config_args.append("--%s" % option_name)
 
             config_args.append("--disable-automatic-init-and-cleanup")
+            config_args.append("--disable-tests")
+            config_args.append("--disable-examples")
 
             env_build.configure(args=config_args)
             env_build.make()
