@@ -78,5 +78,5 @@ class MongoCDriverConan(ConanFile):
         if tools.os_info.is_macos:
             self.cpp_info.exelinkflags = ['-framework CoreFoundation', '-framework Security']
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
-
-
+        if tools.os_info.is_linux:
+            self.cpp_info.libs.append("rt")
