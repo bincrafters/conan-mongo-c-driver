@@ -84,3 +84,5 @@ class MongoCDriverConan(ConanFile):
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
         if tools.os_info.is_linux:
             self.cpp_info.libs.append("rt")
+        if not tools.os_info.is_windows:
+            self.cpp_info.libs.append("pthread")
