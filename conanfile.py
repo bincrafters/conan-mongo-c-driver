@@ -13,13 +13,17 @@ class MongoCDriverConan(ConanFile):
     settings =  "os", "compiler", "arch", "build_type"
     options = {"shared": [True, False]}
     default_options = "shared=False"
-    requires = 'OpenSSL/1.1.0g@conan/stable', 'zlib/[~=1.2]@conan/stable'
+    requires = 'zlib/[~=1.2]@conan/stable'
     exports_sources = ["Find*.cmake"]
     # TODO add cyrus-sasl
 
     def configure(self):
         # Because this is pure C
         del self.settings.compiler.libcxx
+
+    def requirements(self):
+        if not tools.os_info.is_macos and not tools.os_info.is_windows:
+            self.requires.add("OpenSSL/1.0.2n@conan/stable")
 
     def source(self):
         tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version))
