@@ -61,6 +61,11 @@ class MongoCDriverConan(ConanFile):
             config_args.append("--disable-examples")
             config_args.append("--disable-sasl") # TODO for now
 
+            if tools.os_info.is_macos:
+                config_args.append("--enable-ssl=darwin")
+            else:
+                config_args.append("--enable-ssl=auto")
+
             env_build.configure(args=config_args)
             env_build.make()
 
