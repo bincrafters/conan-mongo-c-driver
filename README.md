@@ -4,7 +4,7 @@
 
 | Bintray | Windows | Linux & macOS |
 |:--------:|:---------:|:-----------------:|
-| [![Download](https://api.bintray.com/packages/bincrafters/public-conan/mongo-c-driver%3Abincrafters/images/download.svg)](https://bintray.com/bincrafters/public-conan/mongo-c-driver%3Abincrafters/_latestVersion)| | ![Build Status](https://img.shields.io/badge/build-nope-red.svg) | [![Build Status](https://travis-ci.org/bincrafters/conan-mongo-c-driver.svg)](https://travis-ci.org/bincrafters/conan-mongo-c-driver)|
+| [![Download](https://api.bintray.com/packages/bincrafters/public-conan/mongo-c-driver%3Abincrafters/images/download.svg)](https://bintray.com/bincrafters/public-conan/mongo-c-driver%3Abincrafters/_latestVersion) | ![Build Status](https://img.shields.io/badge/build-nope-red.svg) | [![Build Status](https://travis-ci.org/bincrafters/conan-mongo-c-driver.svg)](https://travis-ci.org/bincrafters/conan-mongo-c-driver) |
 
 ## Conan.io Information
 
