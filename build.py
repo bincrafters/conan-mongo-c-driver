@@ -6,7 +6,7 @@ from bincrafters import build_shared
 
 if __name__ == "__main__":
     name = build_shared.get_name_from_recipe()
-    username, channel, version = build_shared.get_env_vars()
+    username, channel, version, login_username = build_shared.get_conan_vars()
     reference = "{0}/{1}".format(name, version)
     upload = "https://api.bintray.com/conan/{0}/opensource".format(username.lower())
     bincrafters = "https://api.bintray.com/conan/bincrafters/public-conan"
