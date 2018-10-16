@@ -6,7 +6,7 @@ import os
 
 class MongoCDriverConan(ConanFile):
     name = "mongo-c-driver"
-    version = "1.9.4"
+    version = "1.11.0"
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
     description = "A high-performance MongoDB driver for C "
     license = "https://github.com/mongodb/mongo-c-driver/blob/{0}/COPYING".format(version)
