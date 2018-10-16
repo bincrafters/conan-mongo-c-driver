@@ -1,6 +1,6 @@
 [![Download](https://api.bintray.com/packages/bincrafters/public-conan/mongo-c-driver%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/mongo-c-driver%3Abincrafters/_latestVersion)
-[![Build Status](https://travis-ci.org/bincrafters/conan-mongo-c-driver.svg?branch=stable%2F1.9.4)](https://travis-ci.org/bincrafters/conan-mongo-c-driver)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-mongo-c-driver?branch=stable%2F1.9.4&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-mongo-c-driver)
+[![Build Status](https://travis-ci.org/bincrafters/conan-mongo-c-driver.svg?branch=stable%2F1.11.0)](https://travis-ci.org/bincrafters/conan-mongo-c-driver)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-mongo-c-driver?branch=stable%2F1.11.0&svg=true)](https://ci.appveyor.com/project/bincrafters/conan-mongo-c-driver)
 
 [Conan.io](https://conan.io) package recipe for *mongo-c-driver*.
 
@@ -12,17 +12,17 @@ The packages generated with this **conanfile** can be found on [Bintray](https:/
 
 ### Basic setup
 
-    $ conan install mongo-c-driver/1.9.4@bincrafters/stable
+    $ conan install mongo-c-driver/1.11.0@bincrafters/stable
 
 ### Project setup
 
 If you handle multiple dependencies in your project is better to add a *conanfile.txt*
 
     [requires]
-    mongo-c-driver/1.9.4@bincrafters/stable
+    mongo-c-driver/1.11.0@bincrafters/stable
 
     [generators]
-    txt
+    cmake
 
 Complete the installation of requirements for your project running:
 
@@ -42,9 +42,8 @@ The following command both runs all the steps of the conan file, and publishes t
 
 
 ### Available Options
-| Option        | Default | Possible Values  |
-| ------------- |:----------------- |:------------:|
-| shared      | False |  [True, False] |
+
+None, at the moment.
 
 ## Add Remote
 

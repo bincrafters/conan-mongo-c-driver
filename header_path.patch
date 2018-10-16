@@ -1,0 +1,191 @@
+diff --git a/src/libbson/CMakeLists.txt b/src/libbson/CMakeLists.txt
+index f71933d..8bbd5d9 100644
+--- a/src/libbson/CMakeLists.txt
++++ b/src/libbson/CMakeLists.txt
+@@ -209,38 +209,39 @@ set (HEADERS
+    ${PROJECT_SOURCE_DIR}/src/bson/bson-writer.h
+ )
+ 
+-add_library (bson_shared SHARED ${SOURCES} ${HEADERS})
+-set (CMAKE_CXX_VISIBILITY_PRESET hidden)
+-set_target_properties (bson_shared PROPERTIES COMPILE_DEFINITIONS "BSON_COMPILATION;JSONSL_PARSE_NAN")
+-set_target_properties (bson_shared PROPERTIES VERSION 0.0.0 SOVERSION 0)
+-set_target_properties (bson_shared PROPERTIES OUTPUT_NAME "bson-${BSON_API_VERSION}" PREFIX "lib")
++set (THREADS_PREFER_PTHREAD_FLAG 1)
++find_package (Threads REQUIRED)
+ 
+-if (RT_LIBRARY)
+-   target_link_libraries (bson_shared ${RT_LIBRARY})
+-endif ()
++if (NOT ENABLE_STATIC MATCHES "ON|AUTO")
++   add_library (bson_shared SHARED ${SOURCES} ${HEADERS})
++   set (CMAKE_CXX_VISIBILITY_PRESET hidden)
++   set_target_properties (bson_shared PROPERTIES COMPILE_DEFINITIONS "BSON_COMPILATION;JSONSL_PARSE_NAN")
++   set_target_properties (bson_shared PROPERTIES VERSION 0.0.0 SOVERSION 0)
++   set_target_properties (bson_shared PROPERTIES OUTPUT_NAME "bson-${BSON_API_VERSION}" PREFIX "lib")
+ 
+-find_library (M_LIBRARY m)
+-if (M_LIBRARY)
+-   target_link_libraries (bson_shared ${M_LIBRARY})
+-   set (BSON_LIBRARIES ${BSON_LIBRARIES} ${M_LIBRARY})
+-endif ()
++   if (RT_LIBRARY)
++      target_link_libraries (bson_shared ${RT_LIBRARY})
++   endif ()
+ 
+-set (THREADS_PREFER_PTHREAD_FLAG 1)
+-find_package (Threads REQUIRED)
+-target_link_libraries (bson_shared Threads::Threads)
+-if (CMAKE_USE_PTHREADS_INIT)
+-   set (BSON_LIBRARIES ${BSON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+-endif ()
++   find_library (M_LIBRARY m)
++   if (M_LIBRARY)
++      target_link_libraries (bson_shared ${M_LIBRARY})
++      set (BSON_LIBRARIES ${BSON_LIBRARIES} ${M_LIBRARY})
++   endif ()
+ 
+-if (WIN32)
+-   # gethostbyname
+-   target_link_libraries (bson_shared ws2_32)
+-   # Can't find_library () system dependencies
+-   # must be handled specially since we can't resolve them
+-   set (BSON_SYSTEM_LIBRARIES ${BSON_SYSTEM_LIBRARIES} ws2_32)
+-endif ()
++   target_link_libraries (bson_shared Threads::Threads)
++   if (CMAKE_USE_PTHREADS_INIT)
++      set (BSON_LIBRARIES ${BSON_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
++   endif ()
+ 
+-if (ENABLE_STATIC MATCHES "ON|AUTO")
++   if (WIN32)
++      # gethostbyname
++      target_link_libraries (bson_shared ws2_32)
++      # Can't find_library () system dependencies
++      # must be handled specially since we can't resolve them
++      set (BSON_SYSTEM_LIBRARIES ${BSON_SYSTEM_LIBRARIES} ws2_32)
++   endif ()
++else()
+    add_library (bson_static STATIC ${SOURCES} ${HEADERS})
+    set_target_properties (bson_static PROPERTIES COMPILE_DEFINITIONS "BSON_COMPILATION;BSON_STATIC;JSONSL_PARSE_NAN")
+    set_target_properties (bson_static PROPERTIES VERSION 0.0.0)
+@@ -282,16 +283,16 @@ if (ENABLE_EXAMPLES)
+ endif () # ENABLE_EXAMPLES
+ 
+ set (BSON_HEADER_INSTALL_DIR
+-   "${CMAKE_INSTALL_INCLUDEDIR}/libbson-${BSON_API_VERSION}"
++   "${CMAKE_INSTALL_INCLUDEDIR}"
+ )
+-
++if (NOT ENABLE_STATIC MATCHES "ON|AUTO")
+ install (
+    TARGETS bson_shared ${EXAMPLES}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+ )
+-if (ENABLE_STATIC MATCHES "ON|AUTO")
++else()
+    install (
+       TARGETS bson_static ${EXAMPLES}
+       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+diff --git a/src/libmongoc/CMakeLists.txt b/src/libmongoc/CMakeLists.txt
+index 0f4737b..99e1f7b 100644
+--- a/src/libmongoc/CMakeLists.txt
++++ b/src/libmongoc/CMakeLists.txt
+@@ -99,6 +99,9 @@ if (NOT ENABLE_SSL STREQUAL OFF)
+    if (ENABLE_SSL STREQUAL "OPENSSL"
+        OR (NOT APPLE AND NOT WIN32 AND ENABLE_SSL STREQUAL "AUTO"))
+       # Sets OPENSSL_FOUND on success.
++      SET(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
++      SET(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
++
+       include (FindOpenSSL)
+    endif ()
+ 
+@@ -595,16 +598,16 @@ if (WIN32)
+    set (LIBRARIES ${LIBRARIES} ws2_32)
+ endif ()
+ 
+-add_library (mongoc_shared SHARED ${SOURCES} ${HEADERS})
+-set_target_properties (mongoc_shared PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
+-target_link_libraries (mongoc_shared ${LIBRARIES} ${BSON_LIBRARIES})
+-target_include_directories (mongoc_shared BEFORE PUBLIC ${BSON_INCLUDE_DIRS} ${MONGOC_INTERNAL_INCLUDE_DIRS})
+-target_compile_definitions (mongoc_shared PUBLIC MONGOC_COMPILATION ${BSON_DEFINITIONS})
+-
+-set_target_properties (mongoc_shared PROPERTIES VERSION 0.0.0 SOVERSION 0)
+-set_target_properties (mongoc_shared PROPERTIES OUTPUT_NAME "mongoc-${MONGOC_API_VERSION}" PREFIX "lib")
++if (NOT MONGOC_ENABLE_STATIC)
++   add_library (mongoc_shared SHARED ${SOURCES} ${HEADERS})
++   set_target_properties (mongoc_shared PROPERTIES CMAKE_CXX_VISIBILITY_PRESET hidden)
++   target_link_libraries (mongoc_shared ${LIBRARIES} ${BSON_LIBRARIES})
++   target_include_directories (mongoc_shared BEFORE PUBLIC ${BSON_INCLUDE_DIRS} ${MONGOC_INTERNAL_INCLUDE_DIRS})
++   target_compile_definitions (mongoc_shared PUBLIC MONGOC_COMPILATION ${BSON_DEFINITIONS})
+ 
+-if (MONGOC_ENABLE_STATIC)
++   set_target_properties (mongoc_shared PROPERTIES VERSION 0.0.0 SOVERSION 0)
++   set_target_properties (mongoc_shared PROPERTIES OUTPUT_NAME "mongoc-${MONGOC_API_VERSION}" PREFIX "lib")
++else()
+    add_library (mongoc_static STATIC ${SOURCES} ${HEADERS})
+    target_link_libraries (mongoc_static ${LIBRARIES} ${BSON_STATIC_LIBRARIES})
+    target_include_directories (mongoc_static BEFORE PUBLIC ${BSON_STATIC_INCLUDE_DIRS} ${MONGOC_INTERNAL_INCLUDE_DIRS})
+@@ -613,15 +616,15 @@ if (MONGOC_ENABLE_STATIC)
+    set_target_properties (mongoc_static PROPERTIES OUTPUT_NAME "mongoc-static-${MONGOC_API_VERSION}")
+ endif ()
+ 
+-add_executable (mongoc-stat ${PROJECT_SOURCE_DIR}/../../src/tools/mongoc-stat.c)
+-target_link_libraries (mongoc-stat mongoc_shared)
+-
+-# mongoc-stat works if shared memory performance counters are enabled.
+-if (ENABLE_SHM_COUNTERS STREQUAL "ON")
+-   install (PROGRAMS ${PROJECT_BINARY_DIR}/mongoc-stat
+-      DESTINATION ${CMAKE_INSTALL_BINDIR}
+-   )
+-endif ()
++#add_executable (mongoc-stat ${PROJECT_SOURCE_DIR}/../../src/tools/mongoc-stat.c)
++#target_link_libraries (mongoc-stat mongoc_shared)
++#
++## mongoc-stat works if shared memory performance counters are enabled.
++#if (ENABLE_SHM_COUNTERS STREQUAL "ON")
++#   install (PROGRAMS ${PROJECT_BINARY_DIR}/mongoc-stat
++#      DESTINATION ${CMAKE_INSTALL_BINDIR}
++#   )
++#endif ()
+ 
+ function (mongoc_add_test test use_shared)
+    if (ENABLE_TESTS)
+@@ -840,16 +843,16 @@ file (COPY ${PROJECT_SOURCE_DIR}/tests/json DESTINATION ${PROJECT_BINARY_DIR}/te
+ file (COPY ${PROJECT_SOURCE_DIR}/tests/x509gen DESTINATION ${PROJECT_BINARY_DIR}/tests)
+ file (COPY ${PROJECT_SOURCE_DIR}/tests/release_files DESTINATION ${PROJECT_BINARY_DIR}/tests)
+ 
+-install (
+-   TARGETS mongoc_shared ${EXAMPLES}
+-   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+-)
+-
+-if (MONGOC_ENABLE_STATIC)
++if (NOT MONGOC_ENABLE_STATIC)
++   install (
++      TARGETS mongoc_shared ${EXAMPLES}
++      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++   )
++else()
+    install (
+-      TARGETS mongoc_shared mongoc_static ${EXAMPLES}
++      TARGETS mongoc_static ${EXAMPLES}
+       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+@@ -857,7 +860,7 @@ if (MONGOC_ENABLE_STATIC)
+ endif ()
+ 
+ set (MONGOC_HEADER_INSTALL_DIR
+-   "${CMAKE_INSTALL_INCLUDEDIR}/libmongoc-${MONGOC_API_VERSION}"
++   "${CMAKE_INSTALL_INCLUDEDIR}"
+ )
+ 
+ install (
