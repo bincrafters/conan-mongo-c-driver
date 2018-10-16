@@ -8,13 +8,14 @@ class MongoCDriverConan(ConanFile):
     name = "mongo-c-driver"
     version = "1.11.0"
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
+    homepage = "https://github.com/mongodb/mongo-c-driver"
     description = "A high-performance MongoDB driver for C "
     license = "https://github.com/mongodb/mongo-c-driver/blob/{0}/COPYING".format(version)
     settings = "os", "compiler", "arch", "build_type"
-    requires = 'zlib/[~=1.2]@conan/stable'
+    requires = 'zlib/1.2.11@conan/stable'
     exports_sources = ["Find*.cmake", "header_path.patch", "CMakeLists.txt"]
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
     generators = "cmake"
 
     def configure(self):
@@ -28,28 +29,35 @@ class MongoCDriverConan(ConanFile):
     def source(self):
         tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version))
         extracted_dir = self.name + "-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
-        tools.patch(base_path=self.source_subfolder, patch_file="header_path.patch")
+        os.rename(extracted_dir, self._source_subfolder)
+        tools.patch(base_path=self._source_subfolder, patch_file="header_path.patch")
 
-    def build(self):
+    def _configure_cmake(self):
         cmake = CMake(self)
-        cmake.definitions["ENABLE_STATIC"] = "OFF" # static not supported yet... waiting for a PR
         cmake.definitions["ENABLE_TESTS"] = False
         cmake.definitions["ENABLE_EXAMPLES"] = False
         cmake.definitions["ENABLE_AUTOMATIC_INIT_AND_CLEANUP"] = False
         cmake.definitions["ENABLE_BSON"] = "ON"
+        cmake.definitions["ENABLE_STATIC"] = "OFF" # static not supported yet... waiting for a PR
 
         if self.settings.os != 'Windows':
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = True
 
-        cmake.configure(build_folder=self.build_subfolder)
+        cmake.configure(build_folder=self._build_subfolder)
+
+        return cmake
+
+    def build(self):
+        cmake = self._configure_cmake()
         cmake.build()
-        cmake.install()
 
     def package(self):
         self.copy(pattern="COPYING*", src="sources")
         self.copy("Find*.cmake", ".", ".")
+
         # cmake installs all the files
+        cmake = self._configure_cmake()
+        cmake.install()
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
