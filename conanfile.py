@@ -70,9 +70,8 @@ class MongoCDriverConan(ConanFile):
             self.cpp_info.libs.extend(["rt", "pthread"])
 
         if not self.options.shared:
-
-            if tools.os_info.is_linux:
+            if tools.os_info.is_linux or tools.os_info.is_macos:
                 self.cpp_info.libs.append('resolv')
 
             if tools.os_info.is_windows:
-                self.cpp_info.libs.extend(['ws2_32.lib', 'Secur32.lib', 'Crypt32.lib', 'BCrypt.lib'])
+                self.cpp_info.libs.extend(['ws2_32.lib', 'BCrypt.lib'])
