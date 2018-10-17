@@ -40,6 +40,7 @@ class MongoCDriverConan(ConanFile):
         cmake.definitions["ENABLE_EXAMPLES"] = False
         cmake.definitions["ENABLE_AUTOMATIC_INIT_AND_CLEANUP"] = False
         cmake.definitions["ENABLE_BSON"] = "ON"
+        cmake.definitions["ENABLE_SASL"] = "OFF"
         cmake.definitions["ENABLE_STATIC"] = "OFF" if self.options.shared else "ON"
 
         cmake.configure(build_folder=self._build_subfolder)
@@ -74,4 +75,4 @@ class MongoCDriverConan(ConanFile):
                 self.cpp_info.libs.append('resolv')
 
             if tools.os_info.is_windows:
-                self.cpp_info.libs.append('ws2_32.lib', 'Secur32.lib', 'Crypt32.lib', 'BCrypt.lib')
+                self.cpp_info.libs.extend(['ws2_32.lib', 'Secur32.lib', 'Crypt32.lib', 'BCrypt.lib'])
