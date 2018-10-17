@@ -40,7 +40,7 @@ class MongoCDriverConan(ConanFile):
         cmake.definitions["ENABLE_EXAMPLES"] = False
         cmake.definitions["ENABLE_AUTOMATIC_INIT_AND_CLEANUP"] = False
         cmake.definitions["ENABLE_BSON"] = "ON"
-        cmake.definitions["ENABLE_STATIC"] = "OFF" # static not supported yet... waiting for a PR
+        cmake.definitions["ENABLE_STATIC"] = "OFF" if self.options.shared else "ON"
 
         cmake.configure(build_folder=self._build_subfolder)
 
@@ -59,13 +59,11 @@ class MongoCDriverConan(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
-
-        print(', '.join(self.cpp_info.libs))
+        self.cpp_info.libs = ['mongoc-1.0', 'bson-1.0'] if self.options.shared else ['mongoc-static-1.0', 'bson-static-1.0', 'resolv']
 
         if tools.os_info.is_macos:
             self.cpp_info.exelinkflags = ['-framework CoreFoundation', '-framework Security']
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
 
         if tools.os_info.is_linux:
-            self.cpp_info.libs.extend(["rt", "ssl", "crypto", "dl", "pthread"])
+            self.cpp_info.libs.extend(["rt", "pthread"])
