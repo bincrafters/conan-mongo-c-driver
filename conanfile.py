@@ -13,6 +13,8 @@ class MongoCDriverConan(ConanFile):
     license = "https://github.com/mongodb/mongo-c-driver/blob/{0}/COPYING".format(version)
     settings = "os", "compiler", "arch", "build_type"
     requires = 'zlib/1.2.11@conan/stable'
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = "shared=True", "fPIC=True"
     exports_sources = ["Find*.cmake", "header_path.patch", "CMakeLists.txt"]
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
@@ -40,9 +42,6 @@ class MongoCDriverConan(ConanFile):
         cmake.definitions["ENABLE_BSON"] = "ON"
         cmake.definitions["ENABLE_STATIC"] = "OFF" # static not supported yet... waiting for a PR
 
-        if self.settings.os != 'Windows':
-            cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = True
-
         cmake.configure(build_folder=self._build_subfolder)
 
         return cmake
@@ -61,6 +60,8 @@ class MongoCDriverConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
+
+        print(', '.join(self.cpp_info.libs))
 
         if tools.os_info.is_macos:
             self.cpp_info.exelinkflags = ['-framework CoreFoundation', '-framework Security']
