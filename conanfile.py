@@ -59,7 +59,7 @@ class MongoCDriverConan(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = ['mongoc-1.0', 'bson-1.0'] if self.options.shared else ['mongoc-static-1.0', 'bson-static-1.0', 'resolv']
+        self.cpp_info.libs = ['mongoc-1.0', 'bson-1.0'] if self.options.shared else ['mongoc-static-1.0', 'bson-static-1.0']
 
         if tools.os_info.is_macos:
             self.cpp_info.exelinkflags = ['-framework CoreFoundation', '-framework Security']
@@ -67,3 +67,6 @@ class MongoCDriverConan(ConanFile):
 
         if tools.os_info.is_linux:
             self.cpp_info.libs.extend(["rt", "pthread"])
+
+        if tools.os_info.is_linux and not self.options.shared:
+            self.cpp_info.libs.append('resolv')
