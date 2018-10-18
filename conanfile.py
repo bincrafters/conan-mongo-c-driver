@@ -76,4 +76,4 @@ class MongoCDriverConan(ConanFile):
                 self.cpp_info.libs.append('resolv')
 
             if tools.os_info.is_windows:
-                self.cpp_info.libs.extend(['ws2_32.lib', 'BCrypt.lib'])
+                self.cpp_info.libs.extend(['ws2_32.lib', 'secur32.lib', 'crypt32.lib', 'BCrypt.lib'])
