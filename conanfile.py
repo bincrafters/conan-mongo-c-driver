@@ -70,6 +70,8 @@ class MongoCDriverConan(ConanFile):
             self.cpp_info.libs.extend(["rt", "pthread"])
 
         if not self.options.shared:
+            self.cpp_info.defines.extend(['BSON_STATIC=1', 'MONGOC_STATIC=1'])
+
             if tools.os_info.is_linux or tools.os_info.is_macos:
                 self.cpp_info.libs.append('resolv')
 
