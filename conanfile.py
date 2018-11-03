@@ -7,12 +7,14 @@ import os
 class MongoCDriverConan(ConanFile):
     name = "mongo-c-driver"
     version = "1.9.4"
-    url = "http://github.com/bincrafters/conan-mongo-c-driver"
-    description = "A high-performance MongoDB driver for C "
-    license = "https://github.com/mongodb/mongo-c-driver/blob/{0}/COPYING".format(version)
+    url = "https://github.com/mongodb/mongo-c-driver"
+    description = "A high-performance MongoDB driver for C"
+    topics = ["conan", "libmongoc", "mongodb"]
+    author = "Bincrafters <bincrafters@gmail.com>"
+    license = "Apache-2.0"
     settings =  "os", "compiler", "arch", "build_type"
     options = {"shared": [True, False]}
-    default_options = "shared=False"
+    default_options = {"shared": False}
     requires = 'zlib/[>= 1.2.11]@conan/stable'
     exports_sources = ["Find*.cmake"]
     # TODO add cyrus-sasl
