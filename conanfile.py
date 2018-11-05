@@ -9,7 +9,7 @@ class MongoCDriverConan(ConanFile):
     version = "1.9.4"
     url = "https://github.com/mongodb/mongo-c-driver"
     description = "A high-performance MongoDB driver for C"
-    topics = ["conan", "libmongoc", "mongodb"]
+    topics = ("conan", "libmongoc", "mongodb")
     author = "Bincrafters <bincrafters@gmail.com>"
     license = "Apache-2.0"
     settings =  "os", "compiler", "arch", "build_type"
