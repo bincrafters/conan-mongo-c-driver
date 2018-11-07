@@ -15,7 +15,7 @@ class MongoCDriverConan(ConanFile):
     settings =  "os", "compiler", "arch", "build_type"
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    requires = 'zlib/[>= 1.2.11]@conan/stable'
+    requires = 'zlib/1.2.11@conan/stable'
     exports_sources = ["Find*.cmake"]
     # TODO add cyrus-sasl
 
