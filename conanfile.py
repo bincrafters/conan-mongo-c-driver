@@ -8,20 +8,25 @@ import os
 class MongoCDriverConan(ConanFile):
     name = "mongo-c-driver"
     version = "1.11.0"
+    description = "A high-performance MongoDB driver for C"
+    topics = ("conan", "libmongoc", "mongodb")
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
     homepage = "https://github.com/mongodb/mongo-c-driver"
-    description = "A high-performance MongoDB driver for C "
-    license = "Apache 2.0"
+    author = "Bincrafters <bincrafters@gmail.com>"
+    license = "Apache-2.0"
+    exports = ["LICENSE.md"]
+    exports_sources = ["Find*.cmake", "header_path.patch", "CMakeLists.txt"]
+    generators = "cmake"
+    
     settings = "os", "compiler", "arch", "build_type"
-    requires = 'zlib/1.2.11@conan/stable'
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {'shared': False, 'fPIC': True}
-    exports_sources = ["Find*.cmake", "header_path.patch", "CMakeLists.txt"]
+    
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
-    generators = "cmake"
-    exports = ["LICENSE.md"]
-
+    
+    requires = 'zlib/1.2.11@conan/stable'
+    
     def configure(self):
         # Because this is pure C
         del self.settings.compiler.libcxx
