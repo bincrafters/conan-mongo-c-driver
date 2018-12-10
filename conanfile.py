@@ -7,21 +7,42 @@ import os
 
 class MongoCDriverConan(ConanFile):
     name = "mongo-c-driver"
+<<<<<<< HEAD
     version = "1.11.0"
+    description = "A high-performance MongoDB driver for C"
+    topics = ("conan", "libmongoc", "mongodb")
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
     homepage = "https://github.com/mongodb/mongo-c-driver"
-    description = "A high-performance MongoDB driver for C "
-    license = "Apache 2.0"
+    author = "Bincrafters <bincrafters@gmail.com>"
+    license = "Apache-2.0"
+    exports = ["LICENSE.md"]
+    exports_sources = ["Find*.cmake", "header_path.patch", "CMakeLists.txt"]
+    generators = "cmake"
+    
     settings = "os", "compiler", "arch", "build_type"
-    requires = 'zlib/1.2.11@conan/stable'
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {'shared': False, 'fPIC': True}
-    exports_sources = ["Find*.cmake", "header_path.patch", "CMakeLists.txt"]
+    
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
-    generators = "cmake"
-    exports = ["LICENSE.md"]
+    
+    requires = 'zlib/1.2.11@conan/stable'
+    
+=======
+    version = "1.9.4"
+    url = "https://github.com/mongodb/mongo-c-driver"
+    description = "A high-performance MongoDB driver for C"
+    topics = ("conan", "libmongoc", "mongodb")
+    author = "Bincrafters <bincrafters@gmail.com>"
+    license = "Apache-2.0"
+    settings =  "os", "compiler", "arch", "build_type"
+    options = {"shared": [True, False]}
+    default_options = {"shared": False}
+    requires = 'zlib/1.2.11@conan/stable'
+    exports_sources = ["Find*.cmake"]
+    # TODO add cyrus-sasl
 
+>>>>>>> testing/1.9.4
     def configure(self):
         # Because this is pure C
         del self.settings.compiler.libcxx
@@ -35,8 +56,12 @@ class MongoCDriverConan(ConanFile):
             self.requires.add("OpenSSL/1.0.2o@conan/stable")
 
     def source(self):
+<<<<<<< HEAD
         tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz"
                   .format(self.version))
+=======
+        tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version), sha256="910c2f1b2e3df4d0ea39c2f242160028f90fcb8201f05339a730ec4ba70811fb")
+>>>>>>> testing/1.9.4
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
         tools.patch(base_path=self._source_subfolder, patch_file="header_path.patch")
