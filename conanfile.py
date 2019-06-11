@@ -40,10 +40,11 @@ class MongoCDriverConan(ConanFile):
             self.requires.add("OpenSSL/1.0.2o@conan/stable")
 
     def source(self):
-        tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version), sha256="910c2f1b2e3df4d0ea39c2f242160028f90fcb8201f05339a730ec4ba70811fb")
+        tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version),
+                  sha256="ebe9694f7fa6477e594f19507877bbaa0b72747682541cf0cf9a6c29187e97e8")
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
-        tools.patch(base_path=self._source_subfolder, patch_file="header_path.patch")
+        #tools.patch(base_path=self._source_subfolder, patch_file="header_path.patch")
 
     def _configure_cmake(self):
         cmake = CMake(self)
@@ -73,6 +74,8 @@ class MongoCDriverConan(ConanFile):
     def package_info(self):
         self.cpp_info.libs = ['mongoc-1.0', 'bson-1.0'] if self.options.shared \
             else ['mongoc-static-1.0', 'bson-static-1.0']
+        self.cpp_info.includedirs = [os.path.join("include", "libmongoc-1.0"),
+                                     os.path.join("include", "libbson-1.0")]
 
         if tools.os_info.is_macos:
             self.cpp_info.exelinkflags = ['-framework CoreFoundation', '-framework Security']
