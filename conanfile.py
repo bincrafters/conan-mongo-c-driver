@@ -25,7 +25,7 @@ class MongoCDriverConan(ConanFile):
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
     
-    requires = 'zlib/1.2.11@conan/stable'
+    requires = 'zlib/1.2.11'
     
     def configure(self):
         # Because this is pure C
@@ -37,7 +37,7 @@ class MongoCDriverConan(ConanFile):
 
     def requirements(self):
         if not tools.os_info.is_macos and not tools.os_info.is_windows:
-            self.requires.add("OpenSSL/1.0.2o@conan/stable")
+            self.requires.add("openssl/1.0.2t")
 
     def source(self):
         tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version),
