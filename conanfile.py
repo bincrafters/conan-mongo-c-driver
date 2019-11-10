@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from conans import ConanFile, CMake, tools
 import os
 
@@ -12,7 +9,6 @@ class MongoCDriverConan(ConanFile):
     topics = ("conan", "libmongoc", "mongodb")
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
     homepage = "https://github.com/mongodb/mongo-c-driver"
-    author = "Bincrafters <bincrafters@gmail.com>"
     license = "Apache-2.0"
     exports = ["LICENSE.md"]
     exports_sources = ["Find*.cmake", "header_path.patch", "CMakeLists.txt"]
@@ -30,6 +26,7 @@ class MongoCDriverConan(ConanFile):
     def configure(self):
         # Because this is pure C
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
 
     def config_options(self):
         if self.settings.os == "Windows":
