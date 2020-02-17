@@ -4,7 +4,7 @@ import os
 
 class MongoCDriverConan(ConanFile):
     name = "mongo-c-driver"
-    version = "1.14.0"
+    version = "1.16.0"
     description = "A high-performance MongoDB driver for C"
     topics = ("conan", "libmongoc", "mongodb")
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
@@ -38,7 +38,7 @@ class MongoCDriverConan(ConanFile):
 
     def source(self):
         tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version),
-                  sha256="ebe9694f7fa6477e594f19507877bbaa0b72747682541cf0cf9a6c29187e97e8")
+                  sha256="a4e7ed92e3a2a28640987507b4b9da18c2ed225fe87af00ea9deec839cdd55e0")
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
         #tools.patch(base_path=self._source_subfolder, patch_file="header_path.patch")
