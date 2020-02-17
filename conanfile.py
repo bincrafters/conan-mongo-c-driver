@@ -48,15 +48,22 @@ class MongoCDriverConan(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
+        # There are several options that would autodetect optional dependencies
+        # and add them by default, need to disable all of those to ensure
+        # consistent abi and dependencies
         additional_definitions = {
-            "ENABLE_TESTS": False,
-            "ENABLE_EXAMPLES": False,
-            "ENABLE_AUTOMATIC_INIT_AND_CLEANUP": False,
+            "ENABLE_TESTS": "OFF",
+            "ENABLE_EXAMPLES": "OFF",
+            "ENABLE_AUTOMATIC_INIT_AND_CLEANUP": "OFF",
             "ENABLE_BSON": "ON",
             "ENABLE_SASL": "OFF",
-            "ENABLE_SHM_COUNTERS": "OFF",
             "ENABLE_STATIC": "OFF" if self.options.shared else "ON",
             "ENABLE_ICU": "ON" if self.options.icu else "OFF",
+            "ENABLE_SHM_COUNTERS": "OFF",
+            "ENABLE_SNAPPY": "OFF",
+            "ENABLE_SRV": "OFF",
+            "ENABLE_ZLIB": "BUNDLED",
+            "ENABLE_ZSTD": "OFF",
         }
 
         cmake.definitions.update(additional_definitions)
