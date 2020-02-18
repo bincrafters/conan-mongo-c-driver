@@ -66,6 +66,10 @@ class MongoCDriverConan(ConanFile):
             "ENABLE_ZSTD": "OFF",
         }
 
+        if tools.os_info.is_linux:
+            additional_definitions["CMAKE_SHARED_LINKER_FLAGS"] = "-ldl"
+            additional_definitions["CMAKE_EXE_LINKER_FLAGS"] = "-ldl"
+
         cmake.definitions.update(additional_definitions)
         cmake.configure(build_folder=self._build_subfolder)
 
@@ -102,7 +106,7 @@ class MongoCDriverConan(ConanFile):
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
 
         if tools.os_info.is_linux:
-            self.cpp_info.libs.extend(["rt", "pthread"])
+            self.cpp_info.libs.extend(["rt", "pthread", "dl"])
 
         if not self.options.shared:
             self.cpp_info.defines.extend(['BSON_STATIC=1', 'MONGOC_STATIC=1'])
