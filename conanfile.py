@@ -17,7 +17,7 @@ class MongoCDriverConan(ConanFile):
     settings = "os", "compiler", "arch", "build_type"
     options = {"shared": [True, False], "fPIC": [
         True, False], "icu": [True, False]}
-    default_options = {"shared": False, "fPIC": True, "icu": True}
+    default_options = {"shared": False, "fPIC": True, "icu": False}
 
     _source_subfolder = "source_subfolder"
     _build_subfolder = "build_subfolder"
