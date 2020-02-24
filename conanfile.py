@@ -51,26 +51,24 @@ class MongoCDriverConan(ConanFile):
         # There are several options that would autodetect optional dependencies
         # and add them by default, need to disable all of those to ensure
         # consistent abi and dependencies
-        additional_definitions = {
-            "ENABLE_TESTS": "OFF",
-            "ENABLE_EXAMPLES": "OFF",
-            "ENABLE_AUTOMATIC_INIT_AND_CLEANUP": "OFF",
-            "ENABLE_BSON": "ON",
-            "ENABLE_SASL": "OFF",
-            "ENABLE_STATIC": "OFF" if self.options.shared else "ON",
-            "ENABLE_ICU": "ON" if self.options.icu else "OFF",
-            "ENABLE_SHM_COUNTERS": "OFF",
-            "ENABLE_SNAPPY": "OFF",
-            "ENABLE_SRV": "OFF",
-            "ENABLE_ZLIB": "BUNDLED",
-            "ENABLE_ZSTD": "OFF",
-        }
+
+        cmake.definitions["ENABLE_TESTS"] = "OFF"
+        cmake.definitions["ENABLE_EXAMPLES"] = "OFF"
+        cmake.definitions["ENABLE_AUTOMATIC_INIT_AND_CLEANUP"] = "OFF"
+        cmake.definitions["ENABLE_BSON"] = "ON"
+        cmake.definitions["ENABLE_SASL"] = "OFF"
+        cmake.definitions["ENABLE_STATIC"] = "OFF" if self.options.shared else "ON"
+        cmake.definitions["ENABLE_ICU"] = "ON" if self.options.icu else "OFF"
+        cmake.definitions["ENABLE_SHM_COUNTERS"] = "OFF"
+        cmake.definitions["ENABLE_SNAPPY"] = "OFF"
+        cmake.definitions["ENABLE_SRV"] = "OFF"
+        cmake.definitions["ENABLE_ZLIB"] = "BUNDLED"
+        cmake.definitions["ENABLE_ZSTD"] = "OFF"
 
         if tools.os_info.is_linux:
-            additional_definitions["CMAKE_SHARED_LINKER_FLAGS"] = "-ldl"
-            additional_definitions["CMAKE_EXE_LINKER_FLAGS"] = "-ldl"
+            cmake.definitions["CMAKE_SHARED_LINKER_FLAGS"] = "-ldl"
+            cmake.definitions["CMAKE_EXE_LINKER_FLAGS"] = "-ldl"
 
-        cmake.definitions.update(additional_definitions)
         cmake.configure(build_folder=self._build_subfolder)
 
         return cmake
@@ -80,8 +78,7 @@ class MongoCDriverConan(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy(pattern="COPYING*", dst="licenses",
-                  src=self._source_subfolder)
+        self.copy(pattern="COPYING*", dst="licenses", src=self._source_subfolder)
         self.copy("Find*.cmake", ".", ".")
 
         # cmake installs all the files
@@ -97,23 +94,22 @@ class MongoCDriverConan(ConanFile):
         self.cpp_info.includedirs = [os.path.join("include", "libmongoc-1.0"),
                                      os.path.join("include", "libbson-1.0")]
 
+        # If ICU dependency is explicitly set, propagate it
         if self.options.icu and not self.options.shared:
             self.cpp_info.libs.extend(self.deps_cpp_info["icu"].libs)
 
         if tools.os_info.is_macos:
-            self.cpp_info.exelinkflags = [
-                '-framework CoreFoundation', '-framework Security']
+            self.cpp_info.frameworks.extend(['CoreFoundation', 'Security'])
             self.cpp_info.sharedlinkflags = self.cpp_info.exelinkflags
 
         if tools.os_info.is_linux:
-            self.cpp_info.libs.extend(["rt", "pthread", "dl"])
+            self.cpp_info.system_libs.extend(["rt", "pthread", "dl"])
 
         if not self.options.shared:
             self.cpp_info.defines.extend(['BSON_STATIC=1', 'MONGOC_STATIC=1'])
 
             if tools.os_info.is_linux or tools.os_info.is_macos:
-                self.cpp_info.libs.append('resolv')
+                self.cpp_info.system_libs.append('resolv')
 
             if tools.os_info.is_windows:
-                self.cpp_info.libs.extend(
-                    ['ws2_32.lib', 'secur32.lib', 'crypt32.lib', 'BCrypt.lib', 'Dnsapi.lib'])
+                self.cpp_info.system_libs.extend(['ws2_32.lib', 'secur32.lib', 'crypt32.lib', 'BCrypt.lib', 'Dnsapi.lib'])
