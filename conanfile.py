@@ -10,7 +10,6 @@ class MongoCDriverConan(ConanFile):
     url = "http://github.com/bincrafters/conan-mongo-c-driver"
     homepage = "https://github.com/mongodb/mongo-c-driver"
     license = "Apache-2.0"
-    exports = ["LICENSE.md"]
     exports_sources = ["Find*.cmake", "CMakeLists.txt"]
     generators = "cmake"
 
