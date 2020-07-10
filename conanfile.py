@@ -34,7 +34,7 @@ class MongoCDriverConan(ConanFile):
 
     def requirements(self):
         if not tools.os_info.is_macos and not tools.os_info.is_windows:
-            self.requires.add("openssl/1.0.2u")
+            self.requires.add("openssl/1.1.1g")
 
         if self.options.icu:
             self.requires.add("icu/64.2")
