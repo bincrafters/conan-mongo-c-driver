@@ -37,7 +37,7 @@ class MongoCDriverConan(ConanFile):
             self.requires("openssl/1.1.1h")
 
         if self.options.icu:
-            self.requires("icu/64.2")
+            self.requires("icu/68.1")
 
     def source(self):
         tools.get("https://github.com/mongodb/mongo-c-driver/releases/download/{0}/mongo-c-driver-{0}.tar.gz".format(self.version),
